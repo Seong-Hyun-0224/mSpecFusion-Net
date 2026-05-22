@@ -1,0 +1,55 @@
+cff-version: 1.2.0
+message: "If you find this work useful, please cite our paper."
+title: "mSpecFusion-Net: Intelligent Multimodal Smartphone Imaging for Mobile Differential Diagnosis of Psoriasis and Dermatitis and Deep Learning"
+type: conference-paper
+authors:
+  - family-names: Kim
+    given-names: Sewoong
+    affiliation: "Department of Electrical Engineering and Computer Science, DGIST; RNSLab Co., Ltd."
+  - family-names: Kim
+    given-names: Seong-Hyun
+    affiliation: "Department of Artificial Intelligence, DGIST"
+    email: rlatjdgus224@dgist.ac.kr
+  - family-names: Cavalcanti
+    given-names: Thiago Coutinho
+    affiliation: "Department of Electrical Engineering and Computer Science, DGIST"
+  - family-names: Lee
+    given-names: Jonghun
+    affiliation: "Department of Biomedical Science and Engineering, DGIST"
+  - family-names: Lee
+    given-names: Moon Hwan
+    affiliation: "Department of Electrical Engineering and Computer Science, DGIST; Max Planck Institute for Medical Research"
+  - family-names: Lee
+    given-names: Donghun
+    affiliation: "Department of Dermatology, Seoul National University Hospital"
+    email: ivymed27@snu.ac.kr
+  - family-names: Hwang
+    given-names: Jae Youn
+    affiliation: "DGIST"
+    email: jyhwang@dgist.ac.kr
+preferred-citation:
+  type: conference-paper
+  title: "mSpecFusion-Net: Intelligent Multimodal Smartphone Imaging for Mobile Differential Diagnosis of Psoriasis and Dermatitis and Deep Learning"
+  authors:
+    - family-names: Kim
+      given-names: Sewoong
+    - family-names: Kim
+      given-names: Seong-Hyun
+    - family-names: Cavalcanti
+      given-names: Thiago Coutinho
+    - family-names: Lee
+      given-names: Jonghun
+    - family-names: Lee
+      given-names: Moon Hwan
+    - family-names: Lee
+      given-names: Donghun
+    - family-names: Hwang
+      given-names: Jae Youn
+  collection-title: "Medical Image Computing and Computer Assisted Intervention -- MICCAI 2026"
+  publisher:
+    name: "Springer Nature Switzerland"
+  year: 2026
+  conference:
+    name: "29th International Conference on Medical Image Computing and Computer Assisted Intervention (MICCAI 2026)"
+    city: "Strasbourg"
+    country: "France"
