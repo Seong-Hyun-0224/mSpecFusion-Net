@@ -4,7 +4,7 @@ Official repository for the MICCAI 2026 paper:
 
 > **mSpecFusion-Net: Intelligent Multimodal Smartphone Imaging for Mobile Differential Diagnosis of Psoriasis and Dermatitis and Deep Learning**
 >
-> Sewoong Kim*, Thiago Coutinho Cavalcanti*, Seong-Hyun Kim*, Jonghun Lee, Moon Hwan Lee, Donghun Lee†, Jae Youn Hwang†
+> Sewoong Kim*, Seong-Hyun Kim*, Thiago Coutinho Cavalcanti*, Jonghun Lee, Moon Hwan Lee, Donghun Lee†, Jae Youn Hwang†
 >
 > *Equal contribution. †Corresponding authors.
 >
