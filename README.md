@@ -58,7 +58,7 @@ If you find this work useful, please consider citing:
   title     = {mSpecFusion-Net: Intelligent Multimodal Smartphone Imaging
                for Mobile Differential Diagnosis of Psoriasis and
                Dermatitis and Deep Learning},
-  author    = {Kim, Sewoong and Cavalcanti, Thiago Coutinho and Kim, Seong-Hyun and Lee, Jonghun and
+  author    = {Kim, Sewoong and  Kim, Seong-Hyun and Cavalcanti, Thiago Coutinho and Lee, Jonghun and
                Lee, Moon Hwan and Lee, Donghun and Hwang, Jae Youn},
   booktitle = {Medical Image Computing and Computer Assisted
                Intervention -- MICCAI 2026},
