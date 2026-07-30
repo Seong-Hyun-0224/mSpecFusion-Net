@@ -41,8 +41,6 @@ The full implementation code will be released in this repository **in coordinati
 
 - Model architecture (`models/`)
 - Training and evaluation scripts
-- Pre-trained weights for the patient-wise 5-fold runs
-- Inference / deployment example
 - Multimodal data loader and PCA band-selection utility
 
 For inquiries, early access requests, or collaboration, please contact the corresponding author at **jyhwang@dgist.ac.kr**.
