@@ -39,9 +39,8 @@ with 4.18 M trainable parameters (16.0 MB, fp32) and a measured GPU inference la
 
 The full implementation code will be released in this repository **in coordination with completion of pending intellectual property filings**, expected ahead of the conference (September 2026). This repository will be updated with:
 
-- Model architecture (`models/`)
+- Model architecture (`models/`) & code
 - Training and evaluation scripts
-- Multimodal data loader and PCA band-selection utility
 
 For inquiries, early access requests, or collaboration, please contact the corresponding author at **jyhwang@dgist.ac.kr**.
 
