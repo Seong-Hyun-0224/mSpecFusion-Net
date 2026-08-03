@@ -64,7 +64,7 @@ If you find this work useful, please consider citing:
 }
 ```
 
-Please update this entry once the official LNCS volume and page numbers are assigned.
+This site will be updated after official publication of the paper, with the official LNCS volume and page numbers will be assigned.
 
 ---
 
