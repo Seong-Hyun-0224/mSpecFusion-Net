@@ -22,6 +22,8 @@ mSpecFusion-Net is a modality-aware iterative-fusion Transformer for smartphone-
 
 <p align="center">
   <img src="assets/framework.png" width="90%">
+  <br>
+  <em>Overview of the proposed framework (Figure 1 of the paper).</em>
 </p>
 
 A PCA-based discrete band selection step compresses each multispectral stack to its most informative bands prior to fusion, and a parallel-branch Transformer with iterative cross-modal aggregation progressively refines complementary evidence across modalities into a unified diagnostic representation.
