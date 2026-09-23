@@ -35,13 +35,11 @@ with 4.18 M trainable parameters (16.0 MB, fp32) and a measured GPU inference la
 
 ---
 
-## Release Status
+## Release Scope
 
-This repository releases the **final mSpecFusion-Net model** — architecture, training,
-evaluation, and preprocessing code. The fusion-strategy baselines (early/middle/late fusion)
-and the generic backbone comparisons reported in Tables 3 and 5 of the paper are not included;
-the backbone baselines use publicly available reference implementations adapted to our
-multimodal input.
+This repository releases the **final mSpecFusion-Net model** — architecture, training, evaluation, and preprocessing code. The fusion-strategy baselines (early/middle/late fusion) and the generic backbone comparisons reported in Tables 3 and 5 of the paper are not included; the backbone baselines use publicly available reference implementations (ResNet, EfficientNet, ConvNeXt, Swin Transformer, ViT) adapted to our multimodal input.
+
+For inquiries, early access requests, or collaboration, please contact the corresponding author at **jyhwang@dgist.ac.kr**.
 
 ---
 
@@ -49,16 +47,16 @@ multimodal input.
 
 ### Environment
 
-Tested with Python 3.9 and TensorFlow 2.x on a single NVIDIA GPU.
+Developed with Python 3.9.19, TensorFlow 2.13, CUDA 11.8 / cuDNN 8 on NVIDIA RTX A5000 GPUs.
 
 ```bash
 conda create -n mspecfusion python=3.9
 conda activate mspecfusion
+conda install -c conda-forge cudatoolkit=11.8 cudnn=8
 pip install -r requirements.txt
 ```
 
-> `tensorflow-addons` is archived and requires TensorFlow < 2.14. With a newer TensorFlow,
-> replace `tfa.metrics.F1Score` with `keras.metrics.F1Score`.
+> `tensorflow` and `tensorflow-addons` are pinned. `tensorflow-addons` is archived and supports TensorFlow <= 2.13 only; changing either version breaks the `F1Score` and `AdamW` imports.
 
 ### Repository structure
 
@@ -67,36 +65,53 @@ run_cv.py               # launcher: patient-wise 5-fold cross-validation
 cus_ct5_train_loss.py   # training and evaluation
 band_selection.py       # PCA-based spectral band ranking
 result.py               # aggregates per-run logs into summary tables
-models/custom_ct5.py    # mSpecFusion-Net
-preprocess/             # calibration, cropping, patch extraction
+models/custom_ct5.py    # mSpecFusion-Net architecture
+preprocess/             # calibration, lesion cropping, patch extraction
 utils/                  # fold split, multimodal data loader, I/O helpers
 ```
 
 ### Data layout
 
-Each sample is a multi-channel TIFF with all modalities stacked along the channel axis
-(Co-P RGB, Co-P MSI 8 bands, UV-AF, Cross-P RGB, Cross-P MSI 8 bands).
+Each sample is a single multi-channel TIFF holding all modalities stacked along the channel axis:
+
+| Channel index | Content |
+|---|---|
+| 0–2 | Co-polarized RGB |
+| 3–10 | Co-P MSI, 8 bands (435, 470, 490, 505, 525, 570, 610, 640 nm) |
+| 11 | UV-excited autofluorescence |
+| 12–14 | Cross-polarized RGB |
+| 15–22 | Cross-P MSI, 8 bands |
 
 ```
 data/
-├── 20230525/<patient_id>.tif
-└── labels_20230525.csv      # columns: patient_id, fold, <label columns>
+├── 20230525/               # <dataset-name>/ : one .tif per patch
+│   └── <patient_id>.tif
+└── labels_20230525.csv     # columns: patient_id, fold, <label columns>
 ```
 
-`fold` assigns each patient to one of 10 disjoint groups. For each of the 5 folds the split is
-7 groups train / 1 validation / 2 test, so every patient appears in exactly one test set.
+`fold` assigns each patient to one of 10 disjoint groups. For each of the 5 folds the split is **7 groups train / 1 validation / 2 test**, so every patient appears in exactly one test set and no patient crosses the split boundary. Patch size is 128 x 128 by default.
+
+Preprocessing scripts in `preprocess/` cover white-reference calibration, lesion cropping, and non-overlapping patch extraction. Adapt the paths inside them to your own directory structure.
+
+### PCA band selection
+
+`band_selection.py` ranks the 8 bands of each polarization stream by cumulative absolute PCA loading and returns the top-*K* indices. Because the selection is a discrete index choice rather than a learned projection, it is computed once on the calibrated dataset and fixed across all folds.
+
+```bash
+python band_selection.py
+```
+
+The resulting indices are defined in `models/custom_ct5.py :: splitData()` as the `sp_<K>` / `psp_<K>` variants. The paper uses **K = 4**.
 
 ### Training
 
-Default arguments reproduce the configuration reported in the paper
-(Co-P MSI + Cross-P MSI + UV-AF, PCA top-4 bands, iterative fusion, batch 16, 150 epochs):
+Default arguments reproduce the configuration reported in the paper (Co-P MSI + Cross-P MSI + UV-AF, PCA top-4 bands, iterative fusion, batch 16, 150 epochs, Adam with exponential decay from 1e-4):
 
 ```bash
 python run_cv.py --gpu 0
 ```
 
-Modality ablations are run by changing one argument. `sp` = Co-P MSI, `psp` = Cross-P MSI,
-`uv` = UV-AF; the `_4` suffix applies PCA top-4 band selection.
+Modality ablations are run by changing one argument. `sp` = Co-P MSI, `psp` = Cross-P MSI, `uv` = UV-AF; the `_4` suffix applies PCA top-4 band selection.
 
 ```bash
 python run_cv.py --gpu 0 --name_type_dataset sp_4+psp_4   # without UV-AF
@@ -104,13 +119,17 @@ python run_cv.py --gpu 0 --name_type_dataset sp+psp+uv    # without PCA
 python run_cv.py --gpu 0 --name_type_dataset rgb          # RGB only
 ```
 
+Training uses binary focal cross-entropy with label smoothing 0.2, early stopping on validation loss (patience 50), and checkpointing on a 5-epoch smoothed validation F1.
+
 ### Evaluation
 
-Each run appends its metrics to a CSV in the result directory. To aggregate across folds:
+Each run appends its metrics to a CSV in the result directory. To aggregate across folds and export a summary spreadsheet:
 
 ```bash
 python result.py
 ```
+
+Reported metrics are patch-level and micro-averaged over the five folds.
 
 ---
 
@@ -138,14 +157,13 @@ This site will be updated after official publication of the paper, with the offi
 
 ## Ethics & Data
 
-The clinical study was approved by the Institutional Review Board of Seoul National University Hospital (IRB No. 1908-161-1059), and informed consent was obtained from all participants. **Clinical patient data will not be released** to protect participant privacy, in accordance with the approved protocol.
+The clinical study was approved by the Institutional Review Board of Seoul National University Hospital (IRB No. 1908-161-1059), and informed consent was obtained from all participants. **Clinical patient data will not be released** to protect participant privacy, in accordance with the approved protocol. The code in this repository can be applied to comparable multimodal datasets prepared in the layout described above.
 
 ---
 
 ## License
 
-The code in this repository is released ahead of the formal license designation, which is pending completion of intellectual property filings. Until a license file is added, the code is made available **for academic research and reproducibility purposes only**. 
-For commercial use or redistribution, please contact the corresponding author.
+The code in this repository is released ahead of the formal license designation, which is pending completion of intellectual property filings. Until a license file is added, the code is made available **for academic research and reproducibility purposes only**. For commercial use or redistribution, please contact the corresponding author.
 
 ---
 
