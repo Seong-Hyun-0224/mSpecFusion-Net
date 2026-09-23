@@ -165,7 +165,8 @@ The clinical study was approved by the Institutional Review Board of Seoul Natio
 
 ## License
 
-The code in this repository is released ahead of the formal license designation, which is pending completion of intellectual property filings. Until a license file is added, the code is made available **for academic research and reproducibility purposes only**. For commercial use or redistribution, please contact the corresponding author.
+This code is provided for academic research and reproducibility purposes only.
+For commercial use or redistribution, please contact the corresponding author.
 
 ---
 
