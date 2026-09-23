@@ -20,6 +20,10 @@ mSpecFusion-Net is a modality-aware iterative-fusion Transformer for smartphone-
 - **Cross-polarized multispectral imaging (Cross-P MSI)** — 8-band reflectance with surface specular suppression
 - **Ultraviolet-excited autofluorescence (UV-AF)** — biochemical-sensitive contrast
 
+<p align="center">
+  <img src="assets/framework.png" width="90%">
+</p>
+
 A PCA-based discrete band selection step compresses each multispectral stack to its most informative bands prior to fusion, and a parallel-branch Transformer with iterative cross-modal aggregation progressively refines complementary evidence across modalities into a unified diagnostic representation.
 
 Under patient-wise 5-fold cross-validation on a clinical cohort of 32 patients (18 psoriasis, 14 seborrheic dermatitis), mSpecFusion-Net achieves:
