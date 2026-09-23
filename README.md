@@ -37,12 +37,80 @@ with 4.18 M trainable parameters (16.0 MB, fp32) and a measured GPU inference la
 
 ## Release Status
 
-The full implementation code will be released in this repository **in coordination with completion of pending intellectual property filings**, expected ahead of the conference (September 2026). This repository will be updated with:
+This repository releases the **final mSpecFusion-Net model** — architecture, training,
+evaluation, and preprocessing code. The fusion-strategy baselines (early/middle/late fusion)
+and the generic backbone comparisons reported in Tables 3 and 5 of the paper are not included;
+the backbone baselines use publicly available reference implementations adapted to our
+multimodal input.
 
-- Model architecture (`models/`) & code
-- Training and evaluation scripts
+---
 
-For inquiries, early access requests, or collaboration, please contact the corresponding author at **jyhwang@dgist.ac.kr**.
+## Getting Started
+
+### Environment
+
+Tested with Python 3.9 and TensorFlow 2.x on a single NVIDIA GPU.
+
+```bash
+conda create -n mspecfusion python=3.9
+conda activate mspecfusion
+pip install -r requirements.txt
+```
+
+> `tensorflow-addons` is archived and requires TensorFlow < 2.14. With a newer TensorFlow,
+> replace `tfa.metrics.F1Score` with `keras.metrics.F1Score`.
+
+### Repository structure
+
+```
+run_cv.py               # launcher: patient-wise 5-fold cross-validation
+cus_ct5_train_loss.py   # training and evaluation
+band_selection.py       # PCA-based spectral band ranking
+result.py               # aggregates per-run logs into summary tables
+models/custom_ct5.py    # mSpecFusion-Net
+preprocess/             # calibration, cropping, patch extraction
+utils/                  # fold split, multimodal data loader, I/O helpers
+```
+
+### Data layout
+
+Each sample is a multi-channel TIFF with all modalities stacked along the channel axis
+(Co-P RGB, Co-P MSI 8 bands, UV-AF, Cross-P RGB, Cross-P MSI 8 bands).
+
+```
+data/
+├── 20230525/<patient_id>.tif
+└── labels_20230525.csv      # columns: patient_id, fold, <label columns>
+```
+
+`fold` assigns each patient to one of 10 disjoint groups. For each of the 5 folds the split is
+7 groups train / 1 validation / 2 test, so every patient appears in exactly one test set.
+
+### Training
+
+Default arguments reproduce the configuration reported in the paper
+(Co-P MSI + Cross-P MSI + UV-AF, PCA top-4 bands, iterative fusion, batch 16, 150 epochs):
+
+```bash
+python run_cv.py --gpu 0
+```
+
+Modality ablations are run by changing one argument. `sp` = Co-P MSI, `psp` = Cross-P MSI,
+`uv` = UV-AF; the `_4` suffix applies PCA top-4 band selection.
+
+```bash
+python run_cv.py --gpu 0 --name_type_dataset sp_4+psp_4   # without UV-AF
+python run_cv.py --gpu 0 --name_type_dataset sp+psp+uv    # without PCA
+python run_cv.py --gpu 0 --name_type_dataset rgb          # RGB only
+```
+
+### Evaluation
+
+Each run appends its metrics to a CSV in the result directory. To aggregate across folds:
+
+```bash
+python result.py
+```
 
 ---
 
@@ -76,7 +144,8 @@ The clinical study was approved by the Institutional Review Board of Seoul Natio
 
 ## License
 
-The code released in this repository will be distributed under a license to be specified at the time of release. Please refer back to this page or contact the corresponding author for licensing inquiries.
+The code in this repository is released ahead of the formal license designation, which is pending completion of intellectual property filings. Until a license file is added, the code is made available **for academic research and reproducibility purposes only**. 
+For commercial use or redistribution, please contact the corresponding author.
 
 ---
 
