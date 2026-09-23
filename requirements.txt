@@ -1,0 +1,18 @@
+# mSpecFusion-Net (MICCAI 2026)
+# Developed with Python 3.9, CUDA 11.8 / cuDNN 8 on NVIDIA RTX A5000.
+#
+# tensorflow and tensorflow-addons are pinned: tensorflow-addons is archived
+# and only supports TensorFlow <= 2.13. Changing either version will break
+# the F1Score / AdamW imports.
+
+tensorflow==2.13.0
+tensorflow-addons==0.23.0
+
+numpy==1.24.3
+pandas==2.2.2
+scikit-learn==1.5.1
+scikit-image==0.24.0
+imageio==2.35.1
+matplotlib==3.9.2
+openpyxl==3.1.5
+requests==2.32.3
