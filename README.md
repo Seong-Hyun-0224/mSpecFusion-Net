@@ -72,6 +72,8 @@ utils/                  # fold split, multimodal data loader, I/O helpers
 
 ### Data layout
 
+The clinical dataset used in the paper cannot be released (see Ethics & Data). To run the code, prepare your own data in the layout below.
+
 Each sample is a single multi-channel TIFF holding all modalities stacked along the channel axis:
 
 | Channel index | Content |
